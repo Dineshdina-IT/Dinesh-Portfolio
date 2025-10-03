@@ -1,6 +1,7 @@
 import express from "express";
 import Skill from "../models/Skill.js";
-import authMiddleware from "../middleware/authMiddleware.js"; // middleware to check JWT
+import authMiddleware from "../middleware/authMiddleware.js";
+import adminMiddleware from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
@@ -15,18 +16,18 @@ router.get("/", async (req, res) => {
 });
 
 // POST new skill (admin only)
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const skill = new Skill(req.body);
     await skill.save();
-    res.json({ success: true });
+    res.json({ success: true, skill });
   } catch (err) {
     res.status(500).json({ error: "Failed to create skill" });
   }
 });
 
 // PUT update skill (admin only)
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { name, level } = req.body;
     const updatedSkill = await Skill.findByIdAndUpdate(
@@ -34,10 +35,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
       { name, level },
       { new: true }
     );
-
-    if (!updatedSkill) {
-      return res.status(404).json({ error: "Skill not found" });
-    }
+    if (!updatedSkill) return res.status(404).json({ error: "Skill not found" });
 
     res.json({ success: true, skill: updatedSkill });
   } catch (err) {

@@ -59,6 +59,13 @@ export default function Register() {
             Login
           </span>
         </p>
+        <button
+  type="button"
+  onClick={() => window.location.href = "/"}
+  className="w-full py-3 bg-gray-600 text-gray-100 font-semibold rounded-lg hover:bg-gray-700 transition-all"
+>
+  Back to Home
+</button>
       </form>
     </div>
   );

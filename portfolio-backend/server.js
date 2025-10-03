@@ -14,7 +14,11 @@ const app = express();
 
 app.use(cors({ origin: "http://localhost:5173" })); // Vite frontend
 app.use(express.json());
+
+// Auth routes
 app.use("/api/auth", authRoutes);
+
+// Contact routes
 app.use("/api/contact", contactRoutes);
 
 // Connect MongoDB
@@ -22,9 +26,8 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log("❌ MongoDB Error", err));
 
-// Routes
+// Other Routes
 app.use("/api/projects", projectRoutes);
-app.use("/api/contact", contactRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/experience", experienceRoutes);
 

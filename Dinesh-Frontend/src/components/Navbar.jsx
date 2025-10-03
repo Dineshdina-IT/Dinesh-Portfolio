@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { AuthContext } from './AuthContaxt'; // import your AuthContext
+import { AuthContext } from './AuthContext'; // import your AuthContext
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);

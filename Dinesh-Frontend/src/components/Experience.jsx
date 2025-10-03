@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { FaGraduationCap, FaBriefcase, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import axios from "axios";
-import { AuthContext } from "./AuthContaxt"; // to check admin login
+import { AuthContext } from "./AuthContext";
 
 const iconMap = {
   education: <FaGraduationCap />,
@@ -10,10 +10,10 @@ const iconMap = {
 };
 
 export default function Experience() {
-  const { user } = useContext(AuthContext); // get logged-in user
+  const { user } = useContext(AuthContext); // check admin
   const [timeline, setTimeline] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // track which card is in edit mode
-  const [editData, setEditData] = useState({}); // hold temporary edit values
+  const [editIndex, setEditIndex] = useState(null);
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/experience")
@@ -38,7 +38,7 @@ export default function Experience() {
 
   const handleSave = async (id) => {
     try {
-      const token = localStorage.getItem("token"); // for authorization
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `http://localhost:5000/api/experience/${id}`,
         editData,
@@ -62,7 +62,6 @@ export default function Experience() {
   return (
     <section id="experience" className="py-20 px-4 bg-[#222831] relative">
       <div className="max-w-4xl mx-auto">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -74,7 +73,6 @@ export default function Experience() {
           <div className="w-20 h-1 bg-[#FFD369] mx-auto"></div>
         </motion.div>
 
-        {/* Timeline */}
         <div className="relative">
           <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-[#FFD369]/20"></div>
 
@@ -87,58 +85,24 @@ export default function Experience() {
               viewport={{ once: true }}
               className={`mb-12 flex ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'} items-center`}
             >
-              {/* Timeline dot */}
               <div className={`absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full flex items-center justify-center
                 ${item.type === 'education' ? 'bg-[#FFD369] text-[#222831]' : 'bg-[#393E46] text-[#FFD369] border-2 border-[#FFD369]'}`}>
                 {iconMap[item.type]}
               </div>
 
-              {/* Content Card */}
               <motion.div
                 whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(255, 211, 105, 0.2)' }}
                 className={`w-5/12 p-6 rounded-xl ${item.type === 'education' ? 'bg-[#393E46]' : 'bg-[#393E46]/90'} border border-[#FFD369]/10 hover:border-[#FFD369]/30 transition-all relative`}
               >
                 {editIndex === index ? (
                   <>
-                    <input
-                      name="title"
-                      value={editData.title}
-                      onChange={handleChange}
-                      className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400"
-                    />
-                    <input
-                      name="institution"
-                      value={editData.institution}
-                      onChange={handleChange}
-                      className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400"
-                    />
-                    <input
-                      name="period"
-                      value={editData.period}
-                      onChange={handleChange}
-                      className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400"
-                    />
-                    <textarea
-                      name="description"
-                      value={editData.description}
-                      onChange={handleChange}
-                      className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400"
-                    />
+                    <input name="title" value={editData.title} onChange={handleChange} className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400" />
+                    <input name="institution" value={editData.institution} onChange={handleChange} className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400" />
+                    <input name="period" value={editData.period} onChange={handleChange} className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400" />
+                    <textarea name="description" value={editData.description} onChange={handleChange} className="w-full mb-2 px-2 py-1 rounded bg-gray-700 text-gray-100 border border-yellow-400" />
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleSave(item._id)}
-                        type="button"
-                        className="flex items-center gap-1 px-3 py-2 bg-yellow-400 text-gray-900 rounded hover:scale-105 transition-all"
-                      >
-                        <FaSave /> Save
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        type="button"
-                        className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded hover:scale-105 transition-all"
-                      >
-                        <FaTimes /> Cancel
-                      </button>
+                      <button onClick={() => handleSave(item._id)} className="flex items-center gap-1 px-3 py-2 bg-yellow-400 text-gray-900 rounded"><FaSave /> Save</button>
+                      <button onClick={handleCancel} className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded"><FaTimes /> Cancel</button>
                     </div>
                   </>
                 ) : (
@@ -152,14 +116,9 @@ export default function Experience() {
                     <p className="text-sm text-[#EEEEEE]/80 mb-3">{item.period}</p>
                     <p className="text-[#EEEEEE]/90">{item.description}</p>
 
-                    {/* Edit button for logged-in user */}
-                    {user && (
-                      <button
-                        onClick={() => handleEditClick(index, item)}
-                        className="absolute top-4 right-4 text-yellow-400 hover:text-yellow-300"
-                      >
-                        <FaEdit />
-                      </button>
+                    {/* Edit button only for admin */}
+                    {user?.isAdmin && (
+                      <button onClick={() => handleEditClick(index, item)} className="absolute top-4 right-4 text-yellow-400"><FaEdit /></button>
                     )}
                   </>
                 )}
@@ -167,15 +126,6 @@ export default function Experience() {
             </motion.div>
           ))}
         </div>
-
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="w-full h-0.5 bg-gradient-to-r from-transparent via-[#FFD369] to-transparent mt-16"
-          style={{ originX: 0.5 }}
-        />
       </div>
     </section>
   );

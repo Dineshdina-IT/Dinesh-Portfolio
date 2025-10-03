@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import axios from "axios";
-import { AuthContext } from "./AuthContaxt";
+import { AuthContext } from "./AuthContext";
 
 import Navbar from "./Navbar";
 import Hero from "./Hero";
@@ -22,7 +22,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
-      login({ email }, res.data.token); 
+      login(res.data.user, res.data.token);
       setEmail("");
       setPassword("");
     //   alert("✅ Login successful!");
@@ -85,6 +85,15 @@ export default function Login() {
             Sign Up
           </span>
         </p>
+        
+<button
+  type="button"
+  onClick={() => window.location.href = "/"}
+  className="w-full py-3 bg-gray-600 text-gray-100 font-semibold rounded-lg hover:bg-gray-700 transition-all"
+>
+  Back to Home
+</button>
+
       </form>
     </div>
   );
